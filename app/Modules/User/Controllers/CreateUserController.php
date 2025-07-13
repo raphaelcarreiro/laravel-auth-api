@@ -4,9 +4,9 @@ namespace App\Modules\User\Controllers;
 
 use App\Modules\Shared\Http\Controllers\Controller;
 use App\Modules\User\Requests\CreateUserRequest;
+use Core\Shared\Application\Exceptions\BadRequestException;
 use Core\User\Application\Dto\CreateUserInput;
 use Core\User\Application\UseCases\CreateUserUseCase;
-use Exception;
 use Illuminate\Http\JsonResponse;
 
 class CreateUserController extends Controller
@@ -16,7 +16,7 @@ class CreateUserController extends Controller
     }
 
     /**
-     * @throws Exception
+     * @throws BadRequestException
      */
     public function index(CreateUserRequest $request): JsonResponse
     {
