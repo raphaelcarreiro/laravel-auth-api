@@ -1,0 +1,54 @@
+name: kafka-stack
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: auth-api-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - '22181:2181'
+    networks:
+      - kafka
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: auth-api-kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+    networks:
+      - kafka
+
+  akhq:
+    image: tchiotludo/akhq
+    container_name: auth-api-akhq
+    depends_on:
+      - kafka
+      - zookeeper
+    environment:
+      AKHQ_CONFIGURATION: |
+        akhq:
+          connections:
+            docker-kafka-server:
+              properties:
+                bootstrap.servers: "kafka:29092"
+    ports:
+      - "8080:8080"
+    networks:
+      - kafka
+
+networks:
+  kafka:
+    name: auth_api_network
+    external: true
+
