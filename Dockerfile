@@ -6,9 +6,19 @@ RUN apt-get update && apt-get install -y \
     zip unzip curl git \
     libpng-dev libjpeg-dev libfreetype6-dev \
     libonig-dev libzip-dev libxml2-dev \
+    librdkafka-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd mbstring zip pdo pdo_mysql bcmath soap \
-    && pecl install xdebug && docker-php-ext-enable xdebug
+    && docker-php-ext-install gd mbstring zip pdo pdo_mysql bcmath soap
+
+RUN pecl install redis \
+    && docker-php-ext-enable redis
+
+RUN pecl install xdebug \
+    && docker-php-ext-enable xdebug
+
+RUN pecl install rdkafka \
+    && docker-php-ext-enable rdkafka
+
 
 RUN git config --global --add safe.directory /var/www
 
