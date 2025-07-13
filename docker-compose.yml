@@ -1,0 +1,61 @@
+name: auth-api
+
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: auth-api-app
+        restart: unless-stopped
+        working_dir: /var/www
+        ports:
+            - "9003:9003"
+        environment:
+            XDEBUG_MODE: "debug"
+            XDEBUG_CONFIG: "client_host=host.docker.internal"
+        volumes:
+            - .:/var/www
+            - ./.docker/php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
+            - ./.docker/app/storage/logs:/var/www/storage/logs
+        depends_on:
+            - mysql
+        networks:
+            - auth-api
+
+    nginx:
+        image: nginx:alpine
+        container_name: auth-api-nginx
+        restart: unless-stopped
+        ports:
+            - "80:80"
+        volumes:
+            - .:/var/www
+            - ./.docker/nginx/default.dev.conf:/etc/nginx/conf.d/default.conf
+            - ./.docker/nginx/logs:/var/log/nginx
+        depends_on:
+            - app
+        networks:
+            - auth-api
+
+    mysql:
+        image: mysql:8.0
+        container_name: auth-api-mysql
+        restart: unless-stopped
+        environment:
+            MYSQL_DATABASE: auth_api
+            MYSQL_USER: dev
+            MYSQL_PASSWORD: 1234
+            MYSQL_ROOT_PASSWORD: root
+        ports:
+            - "3306:3306"
+        volumes:
+            - .docker/mysql/data:/var/lib/mysql
+        networks:
+            - auth-api
+
+networks:
+    auth-api:
+
+volumes:
+    mysql_data:
+
