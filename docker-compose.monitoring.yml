@@ -1,0 +1,52 @@
+name: monitoring-stack
+
+services:
+    grafana:
+        image: grafana/grafana
+        container_name: auth-api-grafana
+        restart: always
+        environment:
+            - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+            #- GF_AUTH_ANONYMOUS_ENABLED=true
+            #- GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+            - GF_SECURITY_ADMIN_USER=admin
+            - GF_SECURITY_ADMIN_PASSWORD=admin
+        ports:
+            - "3000:3000"
+        volumes:
+            - grafana-storage:/var/lib/grafana
+        networks:
+            - monitoring
+
+    loki:
+        image: grafana/loki:latest
+        container_name: auth-api-loki
+        restart: always
+        ports:
+            - "3100:3100"
+        networks:
+            - monitoring
+
+    promtail:
+        image: grafana/promtail:latest
+        container_name: auth-api-promtail
+        restart: always
+        volumes:
+            - ./.docker/monitoring/promtail-config.yml:/etc/promtail/config.yml
+            - ./.docker/app/storage/logs:/var/www/storage/logs
+            - ./.docker/nginx/logs:/var/log/nginx
+        ulimits:
+          nofile:
+            soft: 65536
+            hard: 65536
+        networks:
+          - monitoring
+        command: -config.file=/etc/promtail/config.yml
+
+networks:
+    monitoring:
+        name: auth_api_network
+        external: true
+
+volumes:
+    grafana-storage:
