@@ -24,6 +24,6 @@ class CreateUserController extends Controller
 
         $output = $this->useCase->execute($input);
 
-        return $this->response($output);
+        return $this->response($output, 201);
     }
 }
