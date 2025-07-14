@@ -4,7 +4,10 @@ namespace Core\Audit\Application\UseCases;
 
 use Core\Audit\Application\Dto\AuditInput;
 use Core\Audit\Application\Dto\AuditOutput;
+use Core\Audit\Application\Dto\UpdateAuditInput;
+use Core\Audit\Application\Enums\AuditStatusEnum;
 use Core\Audit\Domain\AuditEntity;
+use Core\User\Domain\UserEntity;
 
 readonly class CreateAuditUseCase
 {
@@ -13,7 +16,7 @@ readonly class CreateAuditUseCase
     public function execute(AuditInput $input): AuditEntity
     {
         $this->audit = AuditEntity::create([
-            'id' => $input->userId?->getValue() ?? null,
+            'user_id' => $input->user_id?->getValue() ?? null,
             'request' => $input->request,
             'route' => $input->route,
         ]);
@@ -21,9 +24,16 @@ readonly class CreateAuditUseCase
         return $this->audit;
     }
 
-    public function update(string $output): void
+    public function update(UpdateAuditInput $input): void
     {
-        $this->audit->changeResponse($output);
+        $user = UserEntity::fromArray($input->user);
+
+        $auditStatus = $input->status_code >= 400 ? AuditStatusEnum::FAILED : AuditStatusEnum::SUCCESS;
+
+        $this->audit->changeResponse($input->response);
+        $this->audit->changeUserId($user->id);
+        $this->audit->changeStatus($auditStatus);
+        $this->audit->changeRouteName($input->route_name);
     }
 
     public function output(): AuditOutput
