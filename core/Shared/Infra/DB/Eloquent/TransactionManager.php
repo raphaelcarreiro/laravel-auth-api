@@ -9,8 +9,6 @@ class TransactionManager implements TransactionManagerInterface
 {
     public function withTransaction(callable $callback): mixed
     {
-        return DB::transaction(function () use ($callback) {
-            return $callback();
-        });
+        return DB::transaction($callback);
     }
 }
