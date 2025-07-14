@@ -8,15 +8,15 @@ use Core\User\Domain\UserEntity;
 
 class SessionEntity extends Entity
 {
-    public function __construct(public readonly UserEntity $user, public readonly AccessToken $accessToken)
+    public function __construct(public readonly UserEntity|null $user, public readonly AccessToken|null $accessToken)
     {
     }
 
     public function toArray(): array
     {
         return [
-            'user' => $this->user->toArray(),
-            'access_token' => $this->accessToken->toArray(),
+            'user' => $this->user?->toArray() ?? null,
+            'access_token' => $this->accessToken?->toArray() ?? null,
         ];
     }
 
