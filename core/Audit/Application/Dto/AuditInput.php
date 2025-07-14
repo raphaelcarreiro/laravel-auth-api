@@ -8,6 +8,6 @@ use Core\User\Domain\UserId;
 class AuditInput extends Dto
 {
     public string $request;
-    public UserId|null $userId;
+    public UserId|null $user_id;
     public string $route;
 }
