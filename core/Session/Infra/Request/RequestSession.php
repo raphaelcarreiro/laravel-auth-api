@@ -26,16 +26,25 @@ class RequestSession implements SessionInterface
         // TODO: Implement save() method.
     }
 
-    private function getUserFromRequest(): UserEntity
+    private function getUserFromRequest(): UserEntity|null
     {
         $payload = Request::get('user');
+
+        if (!$payload) {
+            return null;
+        }
 
         return UserEntity::fromArray($payload);
     }
 
-    private function getAccessTokenFromRequest(): AccessToken
+    private function getAccessTokenFromRequest(): AccessToken|null
     {
         $bearerToken = Request::cookie('access-token');
+
+        if (!$bearerToken) {
+            return null;
+        }
+
         return AccessToken::createFrom($bearerToken);
     }
 }
