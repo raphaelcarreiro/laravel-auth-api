@@ -7,6 +7,7 @@ use RdKafka\Producer;
 
 class KafkaProducer
 {
+    use KafkaInstrumentationTrait;
     private Producer $producer;
 
     public function __construct()
