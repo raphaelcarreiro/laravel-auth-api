@@ -36,12 +36,25 @@ services:
             - ./.docker/app/storage/logs:/var/www/storage/logs
             - ./.docker/nginx/logs:/var/log/nginx
         ulimits:
-          nofile:
-            soft: 65536
-            hard: 65536
+            nofile:
+                soft: 65536
+                hard: 65536
         networks:
-          - monitoring
+            - monitoring
         command: -config.file=/etc/promtail/config.yml
+
+    tempo:
+        image: grafana/tempo:2.3.1
+        container_name: auth-api-tempo
+        ports:
+            - "4318:4318"
+            - "3200:3200"
+        command: [ "--config.file=/etc/tempo.yml" ]
+        volumes:
+            - ./.docker/monitoring/tempo/config.yml:/etc/tempo.yml
+            - ./.docker/monitoring/tempo/data:/tmp/tempo
+        networks:
+            - monitoring
 
 networks:
     monitoring:
