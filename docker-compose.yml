@@ -80,6 +80,20 @@ services:
         networks:
             - auth-api
 
+    audit_consumer:
+        build:
+            context: .
+        container_name: auth-api-audit-consumer
+        command: php artisan kafka:consume-audit
+        restart: always
+        working_dir: /var/www
+        user: "www-data"
+        volumes:
+            - .:/var/www
+            - ./.docker/app/storage/logs:/var/www/storage/logs
+        networks:
+            - auth-api
+
 networks:
     auth-api:
         driver: bridge
