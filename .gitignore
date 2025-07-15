@@ -24,3 +24,5 @@ Homestead.yaml
 Thumbs.db
 /.docker/mysql/data/*
 /.docker/nginx/logs/*
+/.docker/elasticsearch/data/*
+/.docker/monitoring/tempo/data/*
