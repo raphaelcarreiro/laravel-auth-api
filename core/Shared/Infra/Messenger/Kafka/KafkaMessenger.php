@@ -9,7 +9,7 @@ class KafkaMessenger implements MessengerInterface
     public function send(Message $message): void
     {
         $producer = new KafkaProducer();
-        $producer->produce($message);
+        $producer->produceWithInstrumentation($message);
     }
 
     public function sendMany(array $messages): void
