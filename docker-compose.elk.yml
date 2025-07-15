@@ -1,39 +1,52 @@
 name: elk-stack
 
 services:
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
-    restart: on-failure
-    volumes:
-      - ./.docker/elasticsearch/data:/usr/share/elasticsearch/data
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-      - ELASTIC_PASSWORD=elastic
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
-    ports:
-      - "9200:9200"
-    networks:
-      - elkvpc
-    deploy:
-      resources:
-        limits:
-          memory: 4G
+    elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+        restart: on-failure
+        volumes:
+            - ./.docker/elasticsearch/data:/usr/share/elasticsearch/data
+        environment:
+            - discovery.type=single-node
+            - xpack.security.enabled=false
+            - ELASTIC_PASSWORD=elastic
+            - bootstrap.memory_lock=true
+            - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+        ports:
+            - "9200:9200"
+        networks:
+            - elk_network
+        deploy:
+            resources:
+                limits:
+                    memory: 4G
 
-  kibana:
-    image: docker.elastic.co/kibana/kibana:8.15.0
-    restart: on-failure
-    ports:
-      - "5601:5601"
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-      - ELASTICSEARCH_USERNAME=kibana_system
-      - ELASTICSEARCH_PASSWORD=kibana
-    depends_on:
-      - elasticsearch
-    networks:
-      - elkvpc
+    kibana:
+        image: docker.elastic.co/kibana/kibana:8.15.0
+        restart: on-failure
+        ports:
+            - "5601:5601"
+        environment:
+            - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+            - ELASTICSEARCH_USERNAME=kibana_system
+            - ELASTICSEARCH_PASSWORD=kibana
+            - xpack.security.enabled=false
+        depends_on:
+            - elasticsearch
+        networks:
+            - elk_network
+
+    logstash:
+        image: docker.elastic.co/logstash/logstash:8.15.0
+        volumes:
+            - ./.docker/monitoring/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+            - ./.docker/app/storage/logs:/var/log/laravel:ro
+        depends_on:
+            - elasticsearch
+        networks:
+            - elk_network
 
 networks:
-  elkvpc:
+    elk_network:
+        name: auth_api_network
+        external: true
