@@ -1,7 +1,8 @@
 <?php
 
-namespace Core\Shared\Infra\Messenger\Kafka;
+namespace Core\Shared\Infra\Messenger\Kafka\Producer;
 
+use Core\Shared\Infra\Messenger\Kafka\Message;
 use OpenTelemetry\API\Trace\SpanInterface;
 use OpenTelemetry\API\Trace\TracerProviderInterface;
 

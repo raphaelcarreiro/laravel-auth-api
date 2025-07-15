@@ -32,12 +32,12 @@ class AuditConsumer
 
     public function listen(): void
     {
-        echo "Kafka AuditConsumer started...\n";
+        echo "audit consumer started...\n";
 
         while (true) {
             $message = $this->consumer->consume(10000);
 
-            var_dump($message->errstr());
+            echo "{$message->errstr()} \n";
 
             switch ($message->err) {
                 case RD_KAFKA_RESP_ERR_NO_ERROR:
@@ -54,10 +54,10 @@ class AuditConsumer
 
     private function process(Message $message): void
     {
-        $payload = $message->payload ?? '';
+        $payload = $message->payload;
         $key = $message->key;
 
-        $data = json_decode($payload, true) ?? ['raw' => $payload];
+        $data = json_decode($payload, true);
 
         $this->logger()->info('Kafka message consumed', [
             'extra' => [

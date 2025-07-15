@@ -69,7 +69,7 @@ readonly class AuditMiddleware
     private function log(string $message, array $extra, string $level): void
     {
         if ($level === 'error') {
-            $this->logger()->error($message, ['extra' => $extra]);
+            //$this->logger()->error($message, ['extra' => $extra]);
             return;
         }
 

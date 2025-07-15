@@ -1,8 +1,8 @@
 <?php
 
-namespace Core\Shared\Infra\DB\Eloquent;
+namespace Core\Shared\Infra\DB;
 
-use Core\Shared\Infra\DB\TransactionManagerInterface;
+use Core\Shared\Infra\DB\Eloquent\TransactionManager;
 
 trait TransactionManagerTrait
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace Core\Shared\Infra\Messenger\Kafka;
+namespace Core\Shared\Infra\Messenger;
 
-use Core\Shared\Infra\Messenger\MessengerInterface;
+use Core\Shared\Infra\Messenger\Kafka\KafkaMessenger;
 
 trait MessengerTrait
 {

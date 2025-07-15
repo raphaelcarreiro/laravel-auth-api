@@ -8,7 +8,7 @@ use Core\Auth\Domain\RefreshTokenEntity;
 use Core\Auth\Domain\RefreshTokenId;
 use Core\Auth\Infra\DB\RefreshTokenRepositoryInterface;
 use Core\Shared\Application\Exceptions\UnauthorizedException;
-use Core\Shared\Infra\DB\Eloquent\TransactionManagerTrait;
+use Core\Shared\Infra\DB\TransactionManagerTrait;
 use Core\User\Domain\UserEntity;
 use Core\User\Infra\DB\UserRepositoryInterface;
 
