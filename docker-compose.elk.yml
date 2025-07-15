@@ -4,8 +4,6 @@ services:
     elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
         restart: on-failure
-        volumes:
-            - ./.docker/elasticsearch/data:/usr/share/elasticsearch/data
         environment:
             - discovery.type=single-node
             - xpack.security.enabled=false
@@ -16,6 +14,8 @@ services:
             - "9200:9200"
         networks:
             - elk_network
+        volumes:
+            - esdata:/usr/share/elasticsearch/data
         deploy:
             resources:
                 limits:
@@ -50,3 +50,6 @@ networks:
     elk_network:
         name: auth_api_network
         external: true
+
+volumes:
+    esdata:
