@@ -6,6 +6,7 @@ use Core\Session\Infra\SessionTrait;
 use Illuminate\Support\Facades\Request;
 use Monolog\Formatter\JsonFormatter;
 use Monolog\LogRecord;
+use OpenTelemetry\API\Trace\Span;
 
 class JsonLogger extends JsonFormatter
 {
@@ -14,6 +15,7 @@ class JsonLogger extends JsonFormatter
     public function format(LogRecord $record): string
     {
         $session = $this->session()->get();
+        $spanContext = Span::getCurrent()->getContext();
 
         $custom = [
             'time'        => $record->datetime->format('Y-m-d H:i:s'),
@@ -23,14 +25,8 @@ class JsonLogger extends JsonFormatter
             'message'     => $record->message,
             'user_id'     => $session->user?->id->getValue() ?? null,
             'audit_id'    => Request::get('audit_id'),
+            'trace_id'    => $spanContext->isValid() ? $spanContext->getTraceId() : null,
         ];
-
-        if (isset($record->context['exception'])) {
-            $custom['error_stack'] = [
-                'message' => $record->context['exception']->getMessage(),
-                'file'    => $record->context['exception']->getFile()
-            ];
-        }
 
         if (isset($record->context['extra'])) {
             $custom = [
