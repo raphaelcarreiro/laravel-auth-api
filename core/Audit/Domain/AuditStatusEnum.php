@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\Audit\Application\Enums;
+namespace Core\Audit\Domain;
 
 enum AuditStatusEnum: string
 {

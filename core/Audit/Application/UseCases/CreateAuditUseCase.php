@@ -5,8 +5,8 @@ namespace Core\Audit\Application\UseCases;
 use Core\Audit\Application\Dto\AuditInput;
 use Core\Audit\Application\Dto\AuditOutput;
 use Core\Audit\Application\Dto\UpdateAuditInput;
-use Core\Audit\Application\Enums\AuditStatusEnum;
 use Core\Audit\Domain\AuditEntity;
+use Core\Audit\Domain\AuditStatusEnum;
 use Core\User\Domain\UserEntity;
 
 readonly class CreateAuditUseCase

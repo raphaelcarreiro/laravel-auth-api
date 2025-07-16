@@ -2,7 +2,6 @@
 
 namespace Core\Audit\Domain;
 
-use Core\Audit\Application\Enums\AuditStatusEnum;
 use Core\Shared\Domain\Entity;
 use Core\User\Domain\UserId;
 use DateTime;
