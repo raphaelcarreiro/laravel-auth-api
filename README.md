@@ -15,7 +15,6 @@ API de autenticação construída com Laravel, estruturada de forma modular e pr
 -   **Grafana + Prometheus + Loki**
 -   **OpenTelemetry**
 -   **JWT para autenticação**
--   **NestJS (consumidor opcional para Kafka)**
 
 ---
 
@@ -25,7 +24,7 @@ API de autenticação construída com Laravel, estruturada de forma modular e pr
 .
 ├── .docker/                     # Configurações Docker (MySQL, Redis, Kafka, etc.)
 ├── .devcontainer/              # Configurações para desenvolvimento com VSCode Remote Containers
-├── core/                       # Módulos de domínio (entidades, casos de uso e abstrações de infraestrutura)
+├── core/                       # Módulos de domínio (casos de uso, entidades e abstrações de infraestrutura)
 ├── config/                     # Configurações da aplicação
 ├── routes/                     # Rotas
 ├── docker-compose.yml          # Stack principal
@@ -34,6 +33,64 @@ API de autenticação construída com Laravel, estruturada de forma modular e pr
 ├── docker-compose.elk.yml      # Stack ELK (Elasticsearch, Logstash, Kibana)
 └── ...
 ```
+
+---
+
+---
+
+## 🐳 Instalação do Docker e Docker Compose no Ubuntu (incluindo WSL)
+
+### 1. Atualize o sistema
+
+```bash
+sudo apt update && sudo apt upgrade -y
+```
+
+### 2. Instale dependências
+
+```bash
+sudo apt install apt-transport-https ca-certificates curl software-properties-common lsb-release gnupg -y
+```
+
+### 3. Adicione o repositório oficial do Docker
+
+```bash
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker.gpg
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+```
+
+### 4. Instale o Docker Engine e o Docker Compose Plugin
+
+```bash
+sudo apt update
+sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+```
+
+### 5. Verifique a instalação
+
+```bash
+docker --version
+docker compose version
+```
+
+### 6. Adicione seu usuário ao grupo `docker` (para evitar sudo)
+
+```bash
+sudo usermod -aG docker $USER
+newgrp docker
+```
+
+### 7. Ative o Docker no WSL (se necessário)
+
+```bash
+wsl --update
+wsl --shutdown
+```
+
+> Reinicie o terminal após isso.
 
 ---
 
@@ -136,9 +193,3 @@ Este projeto é compatível com o ambiente de desenvolvimento remoto via VSCode.
 2. Abra a pasta do projeto no VSCode.
 3. Clique em `Reabrir em Container` (ou use o comando da paleta de comandos).
 4. O VSCode construirá o container com base nas configurações de `.devcontainer/`.
-
----
-
-## 🧾 Licença
-
-Este projeto é distribuído sob a licença **MIT**. Veja o arquivo `LICENSE` para mais detalhes.
