@@ -1,6 +1,6 @@
 <?php
 
-namespace Core\Shared\Infra\DB;
+namespace Core\Shared\Infra\DB\TransactionManager;
 
 interface TransactionManagerInterface
 {

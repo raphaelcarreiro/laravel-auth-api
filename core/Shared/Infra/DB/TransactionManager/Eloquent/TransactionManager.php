@@ -1,8 +1,8 @@
 <?php
 
-namespace Core\Shared\Infra\DB\Eloquent;
+namespace Core\Shared\Infra\DB\TransactionManager\Eloquent;
 
-use Core\Shared\Infra\DB\TransactionManagerInterface;
+use Core\Shared\Infra\DB\TransactionManager\TransactionManagerInterface;
 use Illuminate\Support\Facades\DB;
 
 class TransactionManager implements TransactionManagerInterface
