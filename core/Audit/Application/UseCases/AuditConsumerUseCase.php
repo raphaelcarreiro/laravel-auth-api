@@ -8,6 +8,7 @@ use Core\Audit\Domain\AuditId;
 use Core\Audit\Infra\DB\AuditRepositoryInterface;
 use Core\User\Domain\UserId;
 use DateTime;
+use Exception;
 
 readonly class AuditConsumerUseCase
 {
@@ -15,9 +16,13 @@ readonly class AuditConsumerUseCase
         private AuditRepositoryInterface $repository
     ) {}
 
+    /**
+     * @throws Exception
+     */
     public function execute(AuditConsumerInput $input): void
     {
         var_dump($input);
+
         $audit = new AuditEntity(
             id: new AuditId($input->id),
             userId: new UserId($input->user_id),
