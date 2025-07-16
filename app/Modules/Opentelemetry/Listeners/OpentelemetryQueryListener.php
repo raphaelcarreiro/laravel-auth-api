@@ -3,43 +3,68 @@
 namespace App\Modules\Opentelemetry\Listeners;
 
 use Illuminate\Database\Events\QueryExecuted;
+use OpenTelemetry\API\Trace\SpanInterface;
 use OpenTelemetry\API\Trace\TracerProviderInterface;
 
 readonly class OpentelemetryQueryListener
 {
+    private string $operation;
+    private string $table;
+    private SpanInterface $span;
+
     public function __construct(private TracerProviderInterface $provider) {}
 
     public function handle(QueryExecuted $event): void
     {
-        $tracer = $this->provider->getTracer('mysql');
-        $operation = strtoupper(strtok(trim($event->sql), ' ')); // SELECT, INSERT, etc.
+        $this->initialize($event);
+        $this->startSpan();
 
-        preg_match('/(from|into|update)\s+([a-z0-9_`]+)/i', $event->sql, $matches);
-        $table = $matches[2] ?? null;
-
-        $span = $tracer->spanBuilder("DB $operation" . ($table ? " $table" : ''))->startSpan();
-        $scope = $span->activate();
+        $scope = $this->span->activate();
 
         try {
-            $span->setAttribute('db.system', 'mysql');
-            $span->setAttribute('db.name', $event->connectionName);
-            $span->setAttribute('db.statement', $event->sql);
-            $span->setAttribute('db.operation', $operation);
-            if ($table) {
-                $span->setAttribute('db.sql.table', $table);
-            }
-            $span->setAttribute('db.bindings', json_encode($event->bindings));
-            $span->setAttribute('db.duration_ms', $event->time);
-
-            $config = config("database.connections.{$event->connectionName}");
-            if ($config) {
-                $span->setAttribute('net.peer.name', $config['host'] ?? 'localhost');
-                $span->setAttribute('net.peer.port', $config['port'] ?? 3306);
-            }
-
+            $this->tryInstrumentation($event);
         } finally {
-            $span->end();
+            $this->span->end();
             $scope->detach();
+        }
+    }
+
+    private function initialize(QueryExecuted $event): void
+    {
+        $this->operation = strtoupper(strtok(trim($event->sql), ' '));
+
+        preg_match('/(from|into|update)\s+([a-z0-9_`]+)/i', $event->sql, $matches);
+        $this->table = $matches[2] ?? null;
+    }
+
+    private function startSpan(): void
+    {
+        $tracer = $this->provider->getTracer('mysql');
+
+        $this->span = $tracer->spanBuilder(
+            "DB $this->operation" . ($this->table ? " $this->table" : '')
+        )->startSpan();
+    }
+
+    private function tryInstrumentation(QueryExecuted $event): void
+    {
+        $this->span->setAttribute('db.system', 'mysql');
+        $this->span->setAttribute('db.name', $event->connectionName);
+        $this->span->setAttribute('db.statement', $event->sql);
+        $this->span->setAttribute('db.operation', $this->operation);
+
+        if ($this->table) {
+            $this->span->setAttribute('db.sql.table', $this->table);
+        }
+
+        $this->span->setAttribute('db.bindings', json_encode($event->bindings));
+        $this->span->setAttribute('db.duration_ms', $event->time);
+
+        $config = config("database.connections.{$event->connectionName}");
+
+        if ($config) {
+            $this->span->setAttribute('net.peer.name', $config['host'] ?? 'localhost');
+            $this->span->setAttribute('net.peer.port', $config['port'] ?? 3306);
         }
     }
 }
