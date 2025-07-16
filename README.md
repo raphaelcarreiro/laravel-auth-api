@@ -113,24 +113,24 @@ wsl --shutdown
 2. Suba os containers:
 
     ```bash
-    docker-compose up -d
+    docker compose up -d
     ```
 
 3. Instale as dependências:
 
     ```bash
-    docker exec -it auth-api-php composer install
+    docker compose exec app composer install
     ```
 
 4. Gere a chave da aplicação:
 
     ```bash
-    docker exec -it auth-api-php php artisan key:generate
+    docker compose exec app php artisan key:generate
     ```
 
 5. Execute as migrations:
     ```bash
-    docker exec -it auth-api-php php artisan migrate
+    docker compose exec app php artisan migrate
     ```
 
 ---
@@ -175,7 +175,7 @@ O Kafka é usado como broker de mensagens. Há suporte para múltiplos consumido
 -   Subir stack Kafka:
 
     ```bash
-    docker-compose -f docker-compose.kafka.yml up -d
+    docker compose -f docker-compose.kafka.yml up -d
     ```
 
 -   Monitorar via AKHQ:
