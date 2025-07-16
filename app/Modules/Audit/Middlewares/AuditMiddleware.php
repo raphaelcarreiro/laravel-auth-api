@@ -6,7 +6,6 @@ use App\Modules\Audit\Jobs\AuditJob;
 use Closure;
 use Core\Audit\Application\Dto\AuditInput;
 use Core\Audit\Application\Dto\UpdateAuditInput;
-use Core\Audit\Application\Enums\AuditStatusEnum;
 use Core\Audit\Application\UseCases\CreateAuditUseCase;
 use Core\Shared\Infra\Logger\LoggerTrait;
 use Illuminate\Http\Request;
