@@ -37,7 +37,7 @@ class AuditConsumer
         while (true) {
             $message = $this->consumer->consume(10000);
 
-            echo "{$message->errstr()} \n";
+            echo "error message: {$message->errstr()} \n";
 
             switch ($message->err) {
                 case RD_KAFKA_RESP_ERR_NO_ERROR:
@@ -59,13 +59,6 @@ class AuditConsumer
 
         $data = json_decode($payload, true);
 
-        $this->logger()->info('Kafka message consumed', [
-            'extra' => [
-                'key' => $key,
-                'partition' => $message->partition,
-                'offset' => $message->offset,
-                'data' => $data,
-            ],
-        ]);
+        echo "Processing message with key: {$key}\n";
     }
 }
