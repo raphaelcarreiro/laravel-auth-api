@@ -17,6 +17,10 @@ class AuditEntity extends Entity
     public string $request;
     public string $response;
     public AuditStatusEnum $status;
+    public Datetime $startedAt;
+    public Datetime $finishedAt;
+    public int $duration;
+    public string $applicationName = 'authapi';
 
     public function __construct(
         AuditId $id,
@@ -26,7 +30,10 @@ class AuditEntity extends Entity
         string $route,
         ?string $routeName,
         AuditStatusEnum $status,
-        DateTime $createdAt
+        DateTime $createdAt,
+        DateTime $startedAt,
+        DateTime $finishedAt,
+        int $duration
     )
     {
         $this->id = $id;
@@ -37,6 +44,9 @@ class AuditEntity extends Entity
         $this->request = $request;
         $this->response = $response;
         $this->createdAt = $createdAt;
+        $this->startedAt = $startedAt;
+        $this->finishedAt = $finishedAt;
+        $this->duration = $duration;
     }
 
     public static function create(array $payload): AuditEntity
@@ -49,7 +59,10 @@ class AuditEntity extends Entity
             route: $payload['route'],
             routeName: null,
             status: AuditStatusEnum::SUCCESS,
-            createdAt: new DateTime()
+            createdAt: new DateTime(),
+            startedAt: new DateTime(),
+            finishedAt: new DateTime(),
+            duration: 0
         );
     }
 
@@ -58,7 +71,7 @@ class AuditEntity extends Entity
         $this->response = $value;
     }
 
-    public function changeUserId(UserId $id): void
+    public function changeUserId(UserId|null $id): void
     {
         $this->userId = $id;
     }
@@ -73,6 +86,12 @@ class AuditEntity extends Entity
         $this->routeName = $routeName;
     }
 
+    public function changeFinishedAt(DateTime $finishedAt): void
+    {
+        $this->finishedAt = $finishedAt;
+        $this->duration = $this->startedAt->diff($finishedAt)->s;
+    }
+
     public function toArray(): array
     {
         return [
@@ -84,6 +103,10 @@ class AuditEntity extends Entity
             'request' => $this->request,
             'response' => $this->response,
             'status' => $this->status->value,
+            'started_at' => $this->startedAt->format(DateTimeInterface::ATOM),
+            'finished_at' => $this->finishedAt->format(DateTimeInterface::ATOM),
+            'duration' => $this->duration,
+            'application_name' => $this->applicationName,
         ];
     }
 }

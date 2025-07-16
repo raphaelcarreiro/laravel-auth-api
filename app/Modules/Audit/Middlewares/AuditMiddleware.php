@@ -4,7 +4,7 @@ namespace App\Modules\Audit\Middlewares;
 
 use App\Modules\Audit\Jobs\AuditJob;
 use Closure;
-use Core\Audit\Application\Dto\AuditInput;
+use Core\Audit\Application\Dto\CreateAuditInput;
 use Core\Audit\Application\Dto\UpdateAuditInput;
 use Core\Audit\Application\UseCases\CreateAuditUseCase;
 use Core\Shared\Infra\Logger\LoggerTrait;
@@ -19,7 +19,7 @@ readonly class AuditMiddleware
 
     public function handle(Request $request, Closure $next): Response
     {
-        $input = new AuditInput([
+        $input = new CreateAuditInput([
             'request' => json_encode($request->json()->all()),
             'user_id' => $request->get('user'),
             'route' => $request->uri()

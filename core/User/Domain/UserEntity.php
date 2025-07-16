@@ -6,7 +6,6 @@ use Core\Shared\Domain\Entity;
 use Core\Shared\Domain\Traits\TimestampsTrait;
 use Core\Shared\Domain\ValueObjects\Password;
 use DateTime;
-use DateTimeInterface;
 
 class UserEntity extends Entity
 {

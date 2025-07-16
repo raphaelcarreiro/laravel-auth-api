@@ -2,6 +2,8 @@
 
 namespace Core\Shared\Infra\Messenger\Kafka\Consumers;
 
+use Core\Audit\Application\Dto\AuditConsumerInput;
+use Core\Audit\Application\UseCases\AuditConsumerUseCase;
 use Core\Shared\Infra\Logger\LoggerTrait;
 use RdKafka\Conf;
 use RdKafka\Exception;
@@ -17,7 +19,7 @@ class AuditConsumer
     /**
      * @throws Exception
      */
-    public function __construct()
+    public function __construct(private readonly AuditConsumerUseCase $usecase)
     {
         $conf = new Conf();
         $conf->set('metadata.broker.list', config('kafka.brokers'));
@@ -32,12 +34,10 @@ class AuditConsumer
 
     public function listen(): void
     {
-        echo "audit consumer started...\n";
-
         while (true) {
             $message = $this->consumer->consume(10000);
 
-            echo "error message: {$message->errstr()} \n";
+            echo 'consumer state ' . $message->errstr() . $message->err . PHP_EOL;
 
             switch ($message->err) {
                 case RD_KAFKA_RESP_ERR_NO_ERROR:
@@ -55,10 +55,9 @@ class AuditConsumer
     private function process(Message $message): void
     {
         $payload = $message->payload;
-        $key = $message->key;
 
-        $data = json_decode($payload, true);
+        $this->usecase->execute(new AuditConsumerInput(json_decode($payload, true)));
 
-        echo "Processing message with key: {$key}\n";
+        $this->logger()->info('audit message processed');
     }
 }
