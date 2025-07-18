@@ -1,4 +1,4 @@
-# Laravel Auth API
+# Account API
 
 API de autenticação construída com Laravel, estruturada de forma modular e preparada para ambientes Docker, incluindo monitoramento, mensageria com Kafka e integração com ELK Stack.
 
