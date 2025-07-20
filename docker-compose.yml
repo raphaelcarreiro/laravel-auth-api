@@ -6,7 +6,7 @@ services:
             context: .
             dockerfile: Dockerfile
         container_name: auth-api-app
-        restart: unless-stopped
+        restart: no
         working_dir: /var/www
         ports:
             - "9003:9003"
@@ -25,7 +25,7 @@ services:
     nginx:
         image: nginx:alpine
         container_name: auth-api-nginx
-        restart: unless-stopped
+        restart: no
         ports:
             - "80:80"
         volumes:
@@ -40,7 +40,7 @@ services:
     mysql:
         image: mysql:8.0
         container_name: auth-api-mysql
-        restart: unless-stopped
+        restart: no
         environment:
             MYSQL_DATABASE: auth_api
             MYSQL_USER: dev
@@ -49,14 +49,14 @@ services:
         ports:
             - "3306:3306"
         volumes:
-            - .docker/mysql/data:/var/lib/mysql
+            - mysql-data:/var/lib/mysql
         networks:
             - auth-api
 
     redis:
         image: redis:alpine
         container_name: auth-api-redis
-        restart: unless-stopped
+        restart: no
         ports:
             - "6379:6379"
         networks:
@@ -67,7 +67,7 @@ services:
             context: .
             dockerfile: Dockerfile
         container_name: auth-api-queue-worker
-        restart: unless-stopped
+        restart: no
         working_dir: /var/www
         user: "www-data"
         volumes:
@@ -85,7 +85,7 @@ services:
             context: .
         container_name: auth-api-audit-consumer
         command: php artisan kafka:consume-audit
-        restart: always
+        restart: no
         working_dir: /var/www
         user: "www-data"
         volumes:
@@ -100,5 +100,4 @@ networks:
         name: auth_api_network
 
 volumes:
-    mysql_data:
-
+    mysql-data:
