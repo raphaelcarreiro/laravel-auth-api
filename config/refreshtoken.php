@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'ttl' => env('REFRESH_TOKEN_TTL', 1209600), // 14 days
+    'ttl' => env('REFRESH_TOKEN_TTL', 43200),
 ];
