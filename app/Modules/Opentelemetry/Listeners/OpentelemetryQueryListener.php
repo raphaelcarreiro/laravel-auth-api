@@ -9,7 +9,7 @@ use OpenTelemetry\API\Trace\TracerProviderInterface;
 readonly class OpentelemetryQueryListener
 {
     private string $operation;
-    private string $table;
+    private string|null $table;
     private SpanInterface $span;
 
     public function __construct(private TracerProviderInterface $provider) {}
