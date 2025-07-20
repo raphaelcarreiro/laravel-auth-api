@@ -13,7 +13,7 @@ class RefreshTokenEntity extends Entity
     public readonly UserId $userId;
     public readonly int $expiresAt;
     public readonly Datetime $createdAt;
-    private readonly int $ttl;
+    public readonly int $ttlInMinutes;
 
     public function __construct(
         RefreshTokenId $id,
@@ -25,16 +25,18 @@ class RefreshTokenEntity extends Entity
         $this->userId = $userId;
         $this->expiresAt = $expiresAt;
         $this->createdAt = $createdAt;
+
+        $this->ttlInMinutes = config('refreshtoken.ttl');
     }
 
     public static function create(array $payload): RefreshTokenEntity
     {
-        $ttl = (int) config('refreshtoken.ttl');
+        $expiresAt = time() + config('refreshtoken.ttl') * 60;
 
         return new self(
             id: new RefreshTokenId(),
             userId: $payload['user']->id,
-            expiresAt: time() + $ttl,
+            expiresAt: $expiresAt,
             createdAt: new DateTime()
         );
     }
@@ -51,12 +53,10 @@ class RefreshTokenEntity extends Entity
 
     public function cookie(): Cookie
     {
-        $ttl = (int) config('refreshtoken.ttl');
-
         return cookie(
             'refresh-token',
             $this->id->getValue(),
-            $ttl,
+            $this->ttlInMinutes,
             "/",
             null,
             true,
