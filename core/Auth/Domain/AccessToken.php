@@ -15,7 +15,7 @@ class AccessToken
     public string $value;
     public int $expiresAt;
     private string $secret;
-    public readonly int $ttl;
+    public readonly int $ttlInMinutes;
     public readonly UserId $subject;
     private const ALGORITHM = 'HS256';
 
@@ -26,7 +26,9 @@ class AccessToken
         int $expiresAt,
         string $subject
     ) {
-        $this->initialize();
+        $this->secret = config('jwt.secret');
+        $this->ttlInMinutes = config('jwt.ttl');
+
         $this->encode([
             'iss' => $issuer,
             'aud' => $audience,
@@ -36,26 +38,24 @@ class AccessToken
         ]);
     }
 
-    private function initialize(): void
-    {
-        $this->secret = config('jwt.secret');
-        $this->ttl = config('jwt.ttl', 3600);
-    }
-
     private function encode(array $payload): void
     {
+        $expiresAtInSeconds = time() + $this->ttlInMinutes * 60;
+
         $this->value = JWT::encode($payload, $this->secret, self::ALGORITHM);
-        $this->expiresAt = time() + $this->ttl;
+        $this->expiresAt = $expiresAtInSeconds;
         $this->subject = new UserId($payload['sub']);
     }
 
     public static function create(UserEntity $user): self
     {
+        $expiresAtInSeconds = time() + config('jwt.ttl') * 60;
+
         return new self(
             issuer: 'https://api.example.com',
             audience: 'https://front.example.com',
             issuedAt: time(),
-            expiresAt: time() + config('jwt.ttl', 3600),
+            expiresAt: $expiresAtInSeconds,
             subject: $user->id->getValue()
         );
     }
@@ -83,16 +83,20 @@ class AccessToken
         try {
             return (array) JWT::decode($value, new Key($secret, 'HS256'));
         } catch (Exception $exception) {
-            throw new DomainException('invalid access token');
+            throw new DomainException('invalid access token', 401);
         }
     }
 
     public function cookie(): Cookie
     {
+        if (1 === 1) {
+            throw new DomainException('Access token cookie cannot be created');
+        }
+
         return cookie(
             'access-token',
             $this->value,
-            $this->ttl,
+            $this->ttlInMinutes,
             "/",
             null,
             true,
@@ -106,7 +110,7 @@ class AccessToken
     {
         return [
             'access_token' => $this->value,
-            'expires_at' => time() + $this->ttl,
+            'expires_at' => $this->expiresAt,
         ];
     }
 }
