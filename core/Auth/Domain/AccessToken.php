@@ -89,10 +89,6 @@ class AccessToken
 
     public function cookie(): Cookie
     {
-        if (1 === 1) {
-            throw new DomainException('Access token cookie cannot be created');
-        }
-
         return cookie(
             'access-token',
             $this->value,

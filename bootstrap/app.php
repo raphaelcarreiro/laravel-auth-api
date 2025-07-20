@@ -8,7 +8,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use App\Modules\Audit\Commands\AuditConsumerCommand;
 use Illuminate\Support\Facades\Log;
-use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Illuminate\Validation\ValidationException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -23,6 +23,14 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(function (Request $request) {
             return true;
+        });
+
+        $exceptions->render(function (ValidationException $e, $request) {
+            return response([
+                'status_code' => 422,
+                'message' => 'data validation failed',
+                'errors' => $e->errors(),
+            ], $e->status);
         });
 
         $exceptions->renderable(function (Throwable $e, Request $request) {

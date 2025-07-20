@@ -9,5 +9,5 @@ class UpdateAuditInput extends Dto
     public string $response;
     public int $status_code;
     public array|null $user;
-    public string $route_name;
+    public string|null $route_name;
 }
