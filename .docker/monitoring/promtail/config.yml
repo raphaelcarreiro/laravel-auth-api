@@ -15,11 +15,12 @@ scrape_configs:
                 - localhost
             labels:
                 job: "nginx"
-                __path__: "/var/log/nginx/*.log"
+                __path__: "/var/log/nginx/access.log"
+
     - job_name: "laravel-logs"
       static_configs:
           - targets:
                 - localhost
             labels:
                 job: "app"
-                __path__: "/var/www/storage/logs/*.log"
+                __path__: "/var/www/storage/logs/laravel-2025-07-19.log"
