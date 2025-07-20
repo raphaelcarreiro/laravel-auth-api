@@ -4,7 +4,6 @@ services:
     grafana:
         image: grafana/grafana
         container_name: auth-api-grafana
-        restart: always
         environment:
             - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
             #- GF_AUTH_ANONYMOUS_ENABLED=true
@@ -21,24 +20,19 @@ services:
     loki:
         image: grafana/loki:latest
         container_name: auth-api-loki
-        restart: always
         ports:
             - "3100:3100"
         networks:
             - monitoring
 
     promtail:
-        image: grafana/promtail:latest
+        image: grafana/promtail:2.9.4
         container_name: auth-api-promtail
-        restart: always
         volumes:
-            - ./.docker/monitoring/promtail-config.yml:/etc/promtail/config.yml
+            - ./.docker/monitoring/promtail/config.yml:/etc/promtail/config.yml
             - ./.docker/app/storage/logs:/var/www/storage/logs
             - ./.docker/nginx/logs:/var/log/nginx
-        ulimits:
-            nofile:
-                soft: 65536
-                hard: 65536
+            - ./.docker/monitoring/promtail/positions.yml:/tmp/positions.yaml:rw
         networks:
             - monitoring
         command: -config.file=/etc/promtail/config.yml
@@ -49,7 +43,7 @@ services:
         ports:
             - "4318:4318"
             - "3200:3200"
-        command: [ "--config.file=/etc/tempo.yml" ]
+        command: ["--config.file=/etc/tempo.yml"]
         volumes:
             - ./.docker/monitoring/tempo/config.yml:/etc/tempo.yml
             - ./.docker/monitoring/tempo/data:/tmp/tempo
