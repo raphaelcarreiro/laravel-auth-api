@@ -29,7 +29,7 @@ abstract class BaseException extends Exception
             'extra' => [
                 'file' => $this->getFile(),
                 'line' => $this->getLine(),
-                //'trace' => str_replace("\n", "\\n", $this->getTraceAsString())
+                'trace' => str_replace("\n", "\\n", $this->getTraceAsString())
             ]
         ]);
 
