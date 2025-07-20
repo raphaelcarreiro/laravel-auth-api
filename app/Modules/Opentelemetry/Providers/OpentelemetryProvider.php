@@ -23,7 +23,15 @@ class OpentelemetryProvider extends ServiceProvider
         $this->app->singleton(TracerProviderInterface::class, function () {
             $endpoint = config('opentelemetry.tempo_url');
 
-            $transport = (new OtlpHttpTransportFactory())->create($endpoint, 'application/json');
+            $transport = (new OtlpHttpTransportFactory())->create(
+                $endpoint,
+                'application/json',
+                [],
+                [
+                    'timeout' => 0.5,
+                    'connect_timeout' => 0.3,
+                    'http_errors' => false,
+                ]);
 
             $exporter = new SpanExporter($transport);
 
