@@ -10,7 +10,6 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "ext-rdkafka": "*",
         "elasticsearch/elasticsearch": "^8.11",
         "firebase/php-jwt": "^6.11",
         "laravel/framework": "^12.0",

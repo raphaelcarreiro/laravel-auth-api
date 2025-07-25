@@ -8,15 +8,12 @@ services:
         container_name: auth-api-app
         restart: no
         working_dir: /var/www
-        ports:
-            - "9003:9003"
-        environment:
-            XDEBUG_MODE: "debug"
-            XDEBUG_CONFIG: "client_host=host.docker.internal"
         volumes:
             - .:/var/www
             - ./.docker/php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
             - ./.docker/app/storage/logs:/var/www/storage/logs
+        extra_hosts:
+            - "host.docker.internal:172.21.0.1"
         depends_on:
             - mysql
         networks:
