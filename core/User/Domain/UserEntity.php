@@ -55,7 +55,7 @@ class UserEntity extends Entity
             updatedAt: new DateTime($payload['updated_at']),
         );
     }
-    public function changeName(string $name): s
+    public function changeName(string $name): self
     {
         $this->updatedAt = new DateTime();
         $this->name = $name;
