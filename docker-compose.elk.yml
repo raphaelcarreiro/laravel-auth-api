@@ -46,7 +46,7 @@ services:
 
 networks:
     elk_network:
-        name: auth_api_network
+        name: account_api_network
         external: true
 
 volumes:

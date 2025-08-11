@@ -3,7 +3,7 @@ name: monitoring-stack
 services:
     grafana:
         image: grafana/grafana
-        container_name: auth-api-grafana
+        container_name: account-api-grafana
         environment:
             - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
             #- GF_AUTH_ANONYMOUS_ENABLED=true
@@ -19,7 +19,7 @@ services:
 
     loki:
         image: grafana/loki:latest
-        container_name: auth-api-loki
+        container_name: account-api-loki
         ports:
             - "3100:3100"
         networks:
@@ -27,7 +27,7 @@ services:
 
     promtail:
         image: grafana/promtail:2.9.4
-        container_name: auth-api-promtail
+        container_name: account-api-promtail
         volumes:
             - ./.docker/monitoring/promtail/config.yml:/etc/promtail/config.yml
             - ./.docker/app/storage/logs:/var/www/storage/logs
@@ -39,7 +39,7 @@ services:
 
     tempo:
         image: grafana/tempo:2.3.1
-        container_name: auth-api-tempo
+        container_name: account-api-tempo
         ports:
             - "4318:4318"
             - "3200:3200"
@@ -52,7 +52,7 @@ services:
 
 networks:
     monitoring:
-        name: auth_api_network
+        name: account_api_network
         external: true
 
 volumes:

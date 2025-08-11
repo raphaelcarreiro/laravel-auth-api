@@ -1,11 +1,11 @@
-name: auth-api
+name: account-api
 
 services:
     app:
         build:
             context: .
             dockerfile: Dockerfile
-        container_name: auth-api-app
+        container_name: account-api-app
         restart: no
         working_dir: /var/www
         volumes:
@@ -17,11 +17,11 @@ services:
         depends_on:
             - mysql
         networks:
-            - auth-api
+            - account-api
 
     nginx:
         image: nginx:alpine
-        container_name: auth-api-nginx
+        container_name: account-api-nginx
         restart: no
         ports:
             - "80:80"
@@ -32,14 +32,14 @@ services:
         depends_on:
             - app
         networks:
-            - auth-api
+            - account-api
 
     mysql:
         image: mysql:8.0
-        container_name: auth-api-mysql
+        container_name: account-api-mysql
         restart: no
         environment:
-            MYSQL_DATABASE: auth_api
+            MYSQL_DATABASE: account_api
             MYSQL_USER: dev
             MYSQL_PASSWORD: 1234
             MYSQL_ROOT_PASSWORD: root
@@ -48,22 +48,22 @@ services:
         volumes:
             - mysql-data:/var/lib/mysql
         networks:
-            - auth-api
+            - account-api
 
     redis:
         image: redis:alpine
-        container_name: auth-api-redis
+        container_name: account-api-redis
         restart: no
         ports:
             - "6379:6379"
         networks:
-            - auth-api
+            - account-api
 
     queue_worker:
         build:
             context: .
             dockerfile: Dockerfile
-        container_name: auth-api-queue-worker
+        container_name: account-api-queue-worker
         restart: no
         working_dir: /var/www
         user: "www-data"
@@ -75,12 +75,12 @@ services:
             - app
             - redis
         networks:
-            - auth-api
+            - account-api
 
     audit_consumer:
         build:
             context: .
-        container_name: auth-api-audit-consumer
+        container_name: account-api-audit-consumer
         command: php artisan kafka:consume-audit
         restart: no
         working_dir: /var/www
@@ -89,12 +89,12 @@ services:
             - .:/var/www
             - ./.docker/app/storage/logs:/var/www/storage/logs
         networks:
-            - auth-api
+            - account-api
 
 networks:
-    auth-api:
+    account-api:
         driver: bridge
-        name: auth_api_network
+        name: account_api_network
 
 volumes:
     mysql-data:

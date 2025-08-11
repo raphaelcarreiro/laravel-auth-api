@@ -3,7 +3,7 @@ name: kafka-stack
 services:
     zookeeper:
         image: confluentinc/cp-zookeeper:latest
-        container_name: auth-api-zookeeper
+        container_name: account-api-zookeeper
         environment:
             ZOOKEEPER_CLIENT_PORT: 2181
             ZOOKEEPER_TICK_TIME: 2000
@@ -14,7 +14,7 @@ services:
 
     kafka:
         image: confluentinc/cp-kafka:7.5.2
-        container_name: auth-api-kafka
+        container_name: account-api-kafka
         depends_on:
             - zookeeper
         ports:
@@ -33,7 +33,7 @@ services:
 
     akhq:
         image: tchiotludo/akhq
-        container_name: auth-api-akhq
+        container_name: account-api-akhq
         depends_on:
             - kafka
             - zookeeper
@@ -51,5 +51,5 @@ services:
 
 networks:
     kafka:
-        name: auth_api_network
+        name: account_api_network
         external: true
