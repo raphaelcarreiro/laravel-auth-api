@@ -4,7 +4,7 @@ namespace Core\User\Application\UseCases;
 
 use Core\Shared\Application\Exceptions\BadRequestException;
 use Core\User\Application\Dto\CreateUserInput;
-use Core\User\Application\Dto\CreateUserOutput;
+use Core\User\Application\Dto\UserOutput;
 use Core\User\Domain\UserEntity;
 use Core\User\Infra\DB\UserRepositoryInterface;
 
@@ -19,7 +19,7 @@ readonly class CreateUserUseCase
     /**
      * @throws BadRequestException
      */
-    public function execute(CreateUserInput $dto): CreateUserOutput
+    public function execute(CreateUserInput $dto): UserOutput
     {
         $this->validate($dto);
         $this->create($dto);
@@ -50,8 +50,8 @@ readonly class CreateUserUseCase
         }
     }
 
-    private function output(): CreateUserOutput
+    private function output(): UserOutput
     {
-        return new CreateUserOutput($this->user->toArray());
+        return new UserOutput($this->user->toArray());
     }
 }
