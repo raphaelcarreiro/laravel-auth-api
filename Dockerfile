@@ -27,7 +27,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY . .
 
 RUN mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache storage/logs
-RUN chown -R www-data:www-data storage bootstrap/cache
+RUN chown -R www-data:www-data storage bootstrap/cache .docker/app/storage
 RUN chmod -R 775 storage bootstrap/cache
 
 RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
